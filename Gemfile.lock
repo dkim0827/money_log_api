@@ -209,7 +209,7 @@ DEPENDENCIES
   pg (>= 0.18, < 2.0)
   pry-rails
   puma (~> 4.1)
-  rack-cors (~> 1.0.4)
+  rack-cors (>= 1.0.4)
   rails (~> 6.0.2, >= 6.0.2.1)
   sass-rails (>= 6)
   spring

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
       resource :session, only: [:create, :destroy]
       resources :users
+      resources :statements
     end
   end
 end
