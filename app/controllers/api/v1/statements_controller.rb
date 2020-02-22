@@ -9,10 +9,7 @@ class Api::V1::StatementsController < ApplicationController
         if statement.save
             render json: { id: statement.id }
         else
-            render(
-                json: { errors: statement.errors },
-                status: 422 # Unprocessable Entity
-            )
+            render json: { errors: statement.errors }, status: 422 # Unprocessable Entity
         end
     end
 
@@ -53,5 +50,4 @@ class Api::V1::StatementsController < ApplicationController
             render json: { status: 401, errors: ["Unautorized"] }
         end
     end
-end
 end
