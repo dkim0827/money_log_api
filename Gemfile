@@ -18,7 +18,7 @@ gem 'jbuilder', '~> 2.7'
 # Use Active Model has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 # gem to solve CORS error
-gem 'rack-cors', '~> 0.4.0'
+gem 'rack-cors', '~> 1.0.4'
 # for Authorization
 gem 'cancancan'
 # choose data rendering from database
