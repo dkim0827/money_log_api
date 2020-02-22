@@ -12,13 +12,14 @@ class Api::V1::UsersController < ApplicationController
             session[:user_id] = user.id
             render json: { id: user.id }
         else
-            render.json: { errors: user.errors.full_messages }, status: 422 # Unprocessable Entity(WebDAV)
+            render json: { errors: user.errors.full_messages }, status: 422 # Unprocessable Entity(WebDAV)
+        end
     end
 
     def update
         # if user is not current_user
         if @user.id != session[:user_id]
-            render json: { status: 401, errors ["Unautorized"] } # Unauthorized
+            render json: { status: 401, errors: ["Unautorized"] } # Unauthorized
         else
             # if user == current_user
             if @user.update user_params
@@ -62,7 +63,7 @@ class Api::V1::UsersController < ApplicationController
     def user_params
         params.require(:user).permit(
             :first_name,
-            :last_name
+            :last_name,
             :email,
             :password,
             :password_confirmation

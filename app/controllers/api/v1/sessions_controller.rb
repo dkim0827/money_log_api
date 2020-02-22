@@ -6,7 +6,7 @@ class Api::V1::SessionsController < ApplicationController
             render json: { status: 404, errors: ["Email does not exist"] }
         else
             if user&.authenticate(params[:password])
-                session[:user_id] = user.user_id
+                session[:user_id] = user.id
                 render json: {
                     status: :created,
                     logged_in: true,
