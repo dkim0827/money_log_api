@@ -6,10 +6,11 @@ Rails.application.routes.draw do
       # route to check current_user
       get 'users/current', to: 'users#current'
       # route to change password
-      patch '/users/:id/password_edit', to: 'users#password_update'
+      patch '/users/:id/password_update', to: 'users#password_update'
 
       resource :session, only: [:create, :destroy]
       resources :users
+      resources :statements
     end
   end
 end

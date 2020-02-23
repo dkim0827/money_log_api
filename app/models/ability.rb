@@ -9,6 +9,10 @@ class Ability
 
     alias_action :create, :read, :update, :destroy, to: :crud
 
+    can(:crud, Statement) do |statement|
+      statement.user == user
+    end
+
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   end
