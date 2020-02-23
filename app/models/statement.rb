@@ -7,7 +7,7 @@ class Statement < ApplicationRecord
     validates :user_id, presence: true
 
     # will user month, year as title name(eg. Febuary, 2020). So it has to be unique
-    validates :title, presence: true, uniqueness: true
+    validates :title, presence: true, uniqueness: { scope: :user_id }
 
     # year must present, has to be integer greater than 0
     validates :year, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

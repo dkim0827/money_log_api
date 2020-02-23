@@ -14,7 +14,7 @@ class Api::V1::StatementsController < ApplicationController
     end
 
     def index
-        statements = Statement.order(created_at: :desc)
+        statements = Statement.order(year: :desc, month: :desc).where(user_id: current_user.id)
         render json: statements # , each_serializer: QuestionCollectionSerializer
     end
 
@@ -25,7 +25,7 @@ class Api::V1::StatementsController < ApplicationController
 
     def update
         if @statement.update statement_params
-            render json: { id: @statement.id }
+            render json: { status: 200, statement: @statement } #OK
         else
             render :edit
         end
