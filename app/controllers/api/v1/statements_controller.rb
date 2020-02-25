@@ -5,16 +5,23 @@ class Api::V1::StatementsController < ApplicationController
 
     def create
         statement = Statement.new statement_params
+        period_array = params[:statement][:period].split("/")
+        year = period_array[0].to_i
+        month = period_array[1].to_i
+
+        statement.period = DateTime.new(year, month)
+        statement.title = "#{statement.period.strftime("%B")}, #{statement.period.strftime("%Y")}"
         statement.user = current_user
+
         if statement.save
-            render json: { id: statement.id }
+            render json: { statement: statement }
         else
             render json: { errors: statement.errors }, status: 422 # Unprocessable Entity
         end
     end
 
     def index
-        statements = Statement.order(year: :desc, month: :desc).where(user_id: current_user.id)
+        statements = Statement.order(period: :DESC).where(user: current_user)
         render json: statements # , each_serializer: QuestionCollectionSerializer
     end
 
@@ -33,7 +40,7 @@ class Api::V1::StatementsController < ApplicationController
 
     def destroy
         @statement.destroy
-        render( json: { statement: 200 }, status: 200)
+        render( json: { status: 200 }, status: 200)
     end
 
     private
@@ -42,7 +49,7 @@ class Api::V1::StatementsController < ApplicationController
     end
 
     def statement_params
-        params.require(:statement).permit(:title, :month, :year, :memo)
+        params.require(:statement).permit(:title, :period, :memo)
     end
 
     def authorize!

@@ -1,15 +1,28 @@
 class Api::V1::TransactionsController < ApplicationController
     before_action :authenticate_user!
-    
+
     def create
         @statement = Statement.find(params[:statement_id])
-        @transaction = Transaction.new transaction_params
-        @transaction.user = current_user
-        @transaction.statement = @statement
-        if @transaction.save 
-            render json: { id: @transaction.id }
+        s_month = @statement.period.strftime("%m").to_i
+        s_year = @statement.period.strftime("%Y").to_i
+
+        transaction = Transaction.new transaction_params
+        date_array = params[:transaction][:trans_date].split("/")
+        t_month = date_array[0].to_i
+        t_day = date_array[1].to_i
+        t_year = date_array[2].to_i
+        transaction.trans_date = DateTime.new(t_year, t_month, t_day)
+        transaction.user = current_user
+        transaction.statement = @statement
+  
+        if !(s_year == t_year)
+            render json: { status: 401, errors: ["Selected year does not match with statement year"] }
+        elsif !(s_month == t_month)
+            render json: { status: 401, errors: ["Selected month does not match with statement month"] }
+        elsif transaction.save
+            render json: { transaction: transaction }
         else
-            render json: { status: 401, errors: ["Failed to create transaction"] }
+            render json: { errors: transaction.errors }, status: 422
         end
     end
 
@@ -26,11 +39,11 @@ class Api::V1::TransactionsController < ApplicationController
     private
     def transaction_params 
         params.require(:transaction).permit(
-            :transaction_type,
+            :trans_type,
             :description,
             :amount,
             :expense_type,
-            :date
+            :trans_date
         )
     end
 end

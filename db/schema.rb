@@ -10,24 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_23_091719) do
+ActiveRecord::Schema.define(version: 2020_02_25_212336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "statements", force: :cascade do |t|
     t.string "title"
-    t.integer "month"
-    t.integer "year"
     t.text "memo"
     t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "period"
     t.index ["user_id"], name: "index_statements_on_user_id"
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "transaction_type"
+    t.string "trans_type"
     t.text "description"
     t.decimal "amount"
     t.string "expense_type"
@@ -35,7 +34,7 @@ ActiveRecord::Schema.define(version: 2020_02_23_091719) do
     t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "date"
+    t.datetime "trans_date"
     t.index ["statement_id"], name: "index_transactions_on_statement_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
