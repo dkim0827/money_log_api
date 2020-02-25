@@ -20,7 +20,7 @@ class Api::V1::StatementsController < ApplicationController
 
     def show
         @statement = Statement.find_by id:params[:id]
-        render json: @statement
+        render json: @statement, include: [:user, { transactions: [:user] }]
     end
 
     def update

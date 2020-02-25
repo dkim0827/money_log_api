@@ -1,5 +1,6 @@
 class User < ApplicationRecord
     has_many :statements, dependent: :destroy
+    has_many :transactions, dependent: :destroy
 
     # email must be present, need to be unique
     validates :email, presence: true, uniqueness: true,

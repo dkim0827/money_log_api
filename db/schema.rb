@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_22_230340) do
+ActiveRecord::Schema.define(version: 2020_02_23_091719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,20 @@ ActiveRecord::Schema.define(version: 2020_02_22_230340) do
     t.index ["user_id"], name: "index_statements_on_user_id"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.string "transaction_type"
+    t.text "description"
+    t.decimal "amount"
+    t.string "expense_type"
+    t.bigint "statement_id"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "date"
+    t.index ["statement_id"], name: "index_transactions_on_statement_id"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -37,4 +51,6 @@ ActiveRecord::Schema.define(version: 2020_02_22_230340) do
   end
 
   add_foreign_key "statements", "users"
+  add_foreign_key "transactions", "statements"
+  add_foreign_key "transactions", "users"
 end

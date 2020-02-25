@@ -13,6 +13,10 @@ class Ability
       statement.user == user
     end
 
+    can(:crud, Transaction) do |transaction|
+      transaction.user == user
+    end
+
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   end
