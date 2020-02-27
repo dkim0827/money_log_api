@@ -15,11 +15,32 @@ class Api::V1::TransactionsController < ApplicationController
         transaction.user = current_user
         transaction.statement = @statement
   
+        if transaction.save
+            render json: { transaction: transaction }
+        else
+            render json: { errors: transaction.errors }, status: 422
+        end
+    end
+
+    def edit
+        @statement = Statement.find(params[:statement_id])
+        s_month = @statement.period.strftime("%m").to_i
+        s_year = @statement.period.strftime("%Y").to_i
+
+        @transaction = Transaction.find(params[:id])
+        date_array = params[:transaction][:trans_date].split("/")
+        t_month = date_array[0].to_i
+        t_day = date_array[1].to_i
+        t_year = date_array[2].to_i
+        transaction.trans_date = DateTime.new(t_year, t_month, t_day)
+        transaction.user = current_user
+        transaction.statement = @statement
+  
         if !(s_year == t_year)
             render json: { status: 401, errors: ["Selected year does not match with statement year"] }
         elsif !(s_month == t_month)
             render json: { status: 401, errors: ["Selected month does not match with statement month"] }
-        elsif transaction.save
+        elsif @transaction.update
             render json: { transaction: transaction }
         else
             render json: { errors: transaction.errors }, status: 422

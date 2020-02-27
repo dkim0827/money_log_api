@@ -23,7 +23,7 @@ class Api::V1::UsersController < ApplicationController
         else
             # if user == current_user
             if @user.update user_params
-                render json: { status: 200, user: @user } #OK
+                render json: @user #OK
             else
                 render json: { status: 404, errors: ["Email has already been taken"] } # Not Found
             end
@@ -65,6 +65,7 @@ class Api::V1::UsersController < ApplicationController
             :first_name,
             :last_name,
             :email,
+            :balance,
             :password,
             :password_confirmation
         )
