@@ -1,25 +1,21 @@
 class Api::V1::SessionsController < ApplicationController
 
+    # Sign In
     def create
         user = User.find_by_email params[:email]
         if !user
-            render json: { status: 404, errors: ["Email does not exist"] }
-        else
-            if user&.authenticate(params[:password])
+            render json: { status: 404, errors: "Email does not exist" } # Not Found
+        elsif user&.authenticate(params[:password])
                 session[:user_id] = user.id
-                render json: {
-                    status: :created,
-                    logged_in: true,
-                    user: user
-                }
-            else
-                render json: { status: 404, errors: ["Your password is incorrect"] }
-            end
+                render json: user
+        else
+            render json: { status: 404, errors: "Your password is incorrect" } # Not Found
         end
     end
 
+    # Sign Out
     def destroy
         session[:user_id] = nil
-        render json: { status: 200 }, status: 200 # OK
+        render json: { status: 200 } # OK
     end
 end

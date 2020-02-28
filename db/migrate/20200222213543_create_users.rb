@@ -5,6 +5,7 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.string :last_name
       t.string :email, index: { unique: true }
       t.string :password_digest
+      t.decimal :balance, precision: 10, scale: 2
       t.timestamps
     end
   end
