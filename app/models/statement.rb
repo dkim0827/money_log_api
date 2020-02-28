@@ -1,16 +1,21 @@
 class Statement < ApplicationRecord
+
     # relationship between table
     belongs_to :user
     has_many :transactions, dependent: :destroy
 
-    # column validation
-    validates :user_id, presence: true
-    validates :title, presence: true, uniqueness: { scope: :user_id }
-    validates :period, uniqueness: { scope: :user_id }
+    # custom method
+    before_validation :set_default_memo
 
     # custom validation
-    before_validation :set_default_memo
     validate :period_valid?
+
+    # column validation
+    validates :user_id, presence: true
+    validates :period, uniqueness: { scope: :user_id, message: "Statement for selected date already exists" }
+    validates :title, presence: true, uniqueness: { scope: :user_id }
+
+
 
     private
     def set_default_memo
@@ -27,9 +32,9 @@ class Statement < ApplicationRecord
         current_month = DateTime.now.strftime("%m").to_i
 
         if current_year < selected_year
-            self.errors.add(:period, "Year cannot be in the future")
+            self.errors.add(:base, "Year cannot be in the future")
         elsif current_year == selected_year && current_month < selected_month
-            self.errors.add(:period, "Month cannot be in the future")
+            self.errors.add(:base, "Month cannot be in the future")
         end
     end
 

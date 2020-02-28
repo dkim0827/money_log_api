@@ -1,14 +1,16 @@
 class User < ApplicationRecord
+
     # relationship between table
     has_many :statements, dependent: :destroy
     has_many :transactions, dependent: :destroy
 
+    # custom method
+    before_validation :set_default_balance
+
     # column validation
     validates :email, presence: true, uniqueness: true, format: /\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
-    has_secure_password # from gem 'bcrypt'. adds password, password confirmation && validation
-    
-    # custom validation
-    before_validation :set_default_balance
+    validates :balance, numericality: true
+    has_secure_password
 
     # custom method for users full_name
     def full_name

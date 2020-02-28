@@ -1,60 +1,35 @@
 class Api::V1::TransactionsController < ApplicationController
     before_action :authenticate_user!
+    before_action :find_statement, only: [:create, :update, :destroy]
+    before_action :find_transaction, only: [:show, :update, :destroy]
+    before_action :authorize!, only: [:create, :show, :update, :destroy]
 
+    # new transaction
     def create
-        @statement = Statement.find(params[:statement_id])
-        s_month = @statement.period.strftime("%m").to_i
-        s_year = @statement.period.strftime("%Y").to_i
-
         transaction = Transaction.new transaction_params
-        date_array = params[:transaction][:trans_date].split("/")
-        t_month = date_array[0].to_i
-        t_day = date_array[1].to_i
-        t_year = date_array[2].to_i
-        transaction.trans_date = DateTime.new(t_year, t_month, t_day)
         transaction.user = current_user
         transaction.statement = @statement
   
         if transaction.save
-            render json: { transaction: transaction }
+            render json: transaction
         else
-            render json: { errors: transaction.errors }, status: 422
+            render json: { status: 422, errors: transaction.errors.full_messages.first } # Unprocessable Entity
         end
     end
 
-    def edit
-        @statement = Statement.find(params[:statement_id])
-        s_month = @statement.period.strftime("%m").to_i
-        s_year = @statement.period.strftime("%Y").to_i
-
-        @transaction = Transaction.find(params[:id])
-        date_array = params[:transaction][:trans_date].split("/")
-        t_month = date_array[0].to_i
-        t_day = date_array[1].to_i
-        t_year = date_array[2].to_i
-        transaction.trans_date = DateTime.new(t_year, t_month, t_day)
-        transaction.user = current_user
-        transaction.statement = @statement
-  
-        if !(s_year == t_year)
-            render json: { status: 401, errors: ["Selected year does not match with statement year"] }
-        elsif !(s_month == t_month)
-            render json: { status: 401, errors: ["Selected month does not match with statement month"] }
-        elsif @transaction.update
-            render json: { transaction: transaction }
+    # update transaction
+    def update
+        if @transaction.update transaction_params
+            render json: @transaction
         else
-            render json: { errors: transaction.errors }, status: 422
+            render json: { status: 422, errors: @transaction.errors.full_messages.first } # Unprocessable Entity
         end
     end
 
+    # destroy transaction
     def destroy 
-        @transaction = Transaction.find(params[:id])
-        if can? :crud, @transaction
-            @transaction.destroy 
-            render(json: { status: 200 }, status: 200)
-        else
-            render json: { status: 401, errors: ["Unautorized"] }
-        end
+        @transaction.destroy 
+        render json: { status: 200 } # OK
     end
 
     private
@@ -63,8 +38,28 @@ class Api::V1::TransactionsController < ApplicationController
             :trans_type,
             :description,
             :amount,
-            :expense_type,
+            :category,
             :trans_date
         )
+    end
+
+    def find_statement
+        @statement = Statement.find_by id: params[:statement_id]
+        if @statement == nil
+            render json: { status: 404, errors: "Statement does not exist" } # Not Found
+        end
+    end
+
+    def find_transaction
+        @transaction = Transaction.find_by id: params[:id]
+        if @transaction == nil
+            render json: { status: 404, errors: "Transaction does not exist" } # Not Found
+        end
+    end
+
+    def authorize!
+        unless can?(:crud, @statement)
+            render json: { status: 401, errors: "Unautorized" }
+        end
     end
 end
