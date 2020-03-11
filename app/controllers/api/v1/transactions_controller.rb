@@ -1,6 +1,6 @@
 class Api::V1::TransactionsController < ApplicationController
     before_action :authenticate_user!
-    before_action :find_statement, only: [:create, :update, :destroy]
+    before_action :find_statement, only: [:create, :show, :update, :destroy]
     before_action :find_transaction, only: [:show, :update, :destroy]
     before_action :authorize!, only: [:create, :show, :update, :destroy]
 
@@ -9,12 +9,15 @@ class Api::V1::TransactionsController < ApplicationController
         transaction = Transaction.new transaction_params
         transaction.user = current_user
         transaction.statement = @statement
-  
         if transaction.save
             render json: transaction
         else
             render json: { status: 422, errors: transaction.errors.full_messages.first } # Unprocessable Entity
         end
+    end
+
+    def show
+        render json: @transaction
     end
 
     # update transaction
@@ -35,11 +38,13 @@ class Api::V1::TransactionsController < ApplicationController
     private
     def transaction_params 
         params.require(:transaction).permit(
+            :id,
             :trans_type,
             :description,
             :amount,
             :category,
-            :trans_date
+            :trans_date,
+            :statement_id
         )
     end
 

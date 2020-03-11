@@ -3,7 +3,7 @@ class UserSerializer < ActiveModel::Serializer
 
   # users current_balance
   def current_balance
-    '%.2f' % (  
+    '%.2f' % (
       User.where(id: object.id).sum(:balance) + 
       Transaction.where(user_id: object.id, trans_type: "income".upcase).sum(:amount) -
       Transaction.where(user_id: object.id, trans_type: "le".upcase).sum(:amount) -
@@ -13,7 +13,7 @@ class UserSerializer < ActiveModel::Serializer
 
   # users initial_balance
   def initial_balance
-    %.2f' % User.where(id: object.id).sum(:balance)
+    '%.2f' % User.where(id: object.id).sum(:balance)
   end
 
 end

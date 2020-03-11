@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       resources :users, only: [:create, :update, :destroy]
       
       resources :statements, only: [:index, :create, :show, :update, :destroy] do
-        resources :transactions, only: [:create, :update, :destroy]
+        resources :transactions, only: [:create, :show, :update, :destroy]
       end
 
     end
